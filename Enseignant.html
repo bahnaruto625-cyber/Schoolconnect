@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head><title>Inscription Enseignant</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body{background:blue; font-family:Arial; padding:20px}
+.box{background:white; padding:20px; border-radius:10px; max-width:400px; margin:auto} 
+input{width:100%; padding:10px; margin:8px 0; border:1px solid #ccc; border-radius:5px} 
+button{width:100%; padding:12px; background:blue; color:white; border:none; border-radius:5px; font-weight:bold; font-size:16px}
+.info{background:#e8f0ff; padding:10px; border-radius:5px; text-align:center; margin:10px 0}
+</style>
+</head>
+<body>
+<div class="box">
+<h2>👨‍🏫 Inscription Enseignant</h2>
+<input id="nom" placeholder="Nom et Prénom">
+<input id="matiere" placeholder="Matière enseignée">
+<input id="ecole" placeholder="Nom de l'école">
+<input id="tel" placeholder="Téléphone">
+
+<div class="info">
+<b>GRATUIT</b><br>
+Accès bloqué si l'école n'est pas abonnée
+</div>
+
+<button onclick="sinscrire()">S'inscrire Gratuitement</button>
+<a href="index.html" style="display:block; text-align:center; margin-top:15px">⬅️ Retour</a>
+</div>
+<script>
+function sinscrire(){ 
+    alert("Inscription envoyée. Accès activé seulement si votre école est abonnée.");
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Administration - School Connect</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            color: #222;
+        }
+
+        header {
+            background: #111827;
+            color: white;
+            padding: 20px;
+        }
+
+        header h1 {
+            font-size: 24px;
+            margin-bottom: 6px;
+        }
+
+        header p {
+            color: #cbd5e1;
+        }
+
+        .container {
+            width: 95%;
+            max-width: 1200px;
+            margin: 20px auto;
+        }
+
+        /* MENU */
+
+        .admin-menu {
+            display: grid;
+            grid-template-columns: repeat(
+                auto-fit,
+                minmax(150px, 1fr)
+            );
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .menu-btn {
+            border: none;
+            padding: 15px;
+            border-radius: 12px;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .menu-btn:hover {
+            background: #e5e7eb;
+        }
+
+        /* STATISTIQUES */
+
+        .stats {
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fit, minmax(180px, 1fr));
+
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+
+            box-shadow:
+                0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .card h3 {
+            color: #6b7280;
+            font-size: 15px;
+            margin-bottom: 10px;
+        }
+
+        .card strong {
+            font-size: 28px;
+        }
+
+        /* SECTIONS */
+
+        section {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+
+            box-shadow:
+                0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        section h2 {
+            margin-bottom: 15px;
+        }
+
+        /* INFORMATIONS */
+
+        .payment {
+            padding: 15px;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+
+        .payment p {
+            margin: 5px 0;
+        }
+
+        /* STATUT */
+
+        .status {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 20px;
+
+            font-size: 13px;
+
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        /* BOUTONS */
+
+        .btn {
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+
+            cursor: pointer;
+
+            margin-top: 8px;
+            margin-right: 5px;
+        }
+
+        .verify {
+            background: #16a34a;
+            color: white;
+        }
+
+        .reject {
+            background: #dc2626;
+            color: white;
+        }
+
+        .logout {
+            background: #374151;
+            color: white;
+
+            width: 100%;
+
+            margin-top: 10px;
+        }
+
+        /* FOOTER */
+
+        footer {
+            text-align: center;
+            padding: 25px;
+
+            color: #6b7280;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 600px) {
+
+            header h1 {
+                font-size: 20px;
+            }
+
+            .container {
+                width: 92%;
+            }
+
+            section {
+                padding: 15px;
+            }
+
+            .menu-btn {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- =========================
+     EN-TÊTE
+========================= -->
+
+<header>
+
+    <h1>⚙️ School Connect</h1>
+
+    <p>Espace administrateur</p>
+
+</header>
+
+
+<div class="container">
+
+
+    <!-- =========================
+         MENU ADMINISTRATEUR
+    ========================= -->
+
+    <div class="admin-menu">
+
+        <button
+            class="menu-btn"
+            onclick="afficher('ecoles')">
+
+            🏫 Écoles
+
+        </button>
+
+
+        <button
+            class="menu-btn"
+            onclick="afficher('parents')">
+
+            👨‍👩‍👧 Parents
+
+        </button>
+
+
+        <button
+            class="menu-btn"
+            onclick="afficher('enseignants')">
+
+            👨‍🏫 Enseignants
+
+        </button>
+
+
+        <button
+            class="menu-btn"
+            onclick="afficher('eleves')">
+
+            🎓 Élèves
+
+        </button>
+
+
+        <button
+            class="menu-btn"
+            onclick="afficher('paiements')">
+
+            💰 Paiements
+
+        </button>
+
+    </div>
+
+
+
+    <!-- =========================
+         STATISTIQUES
+    ========================= -->
+
+    <div class="stats">
+
+
+        <div class="card">
+
+            <h3>🏫 Écoles</h3>
+
+            <strong id="nombreEcoles">
+                0
+            </strong>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>👨‍👩‍👧 Parents</h3>
+
+            <strong id="nombreParents">
+                0
+            </strong>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>👨‍🏫 Enseignants</h3>
+
+            <strong id="nombreEnseignants">
+                0
+            </strong>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>🎓 Élèves</h3>
+
+            <strong id="nombreEleves">
+                0
+            </strong>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =========================
+         ÉCOLES
+    ========================= -->
+
+    <section id="ecoles">
+
+        <h2>🏫 Écoles inscrites</h2>
+
+
+        <div class="payment">
+
+            <p>
+                <strong>
+                    Aucune école pour le moment
+                </strong>
+            </p>
+
+            <p>
+                Les écoles inscrites
+                apparaîtront ici.
+            </p>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         PARENTS
+    ========================= -->
+
+    <section id="parents">
+
+        <h2>👨‍👩‍👧 Parents inscrits</h2>
+
+
+        <div class="payment">
+
+            <p>
+                <strong>
+                    Aucun parent pour le moment
+                </strong>
+            </p>
+
+            <p>
+                Les parents inscrits
+                apparaîtront ici.
+            </p>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         ENSEIGNANTS
+    ========================= -->
+
+    <section id="enseignants">
+
+        <h2>👨‍🏫 Enseignants</h2>
+
+
+        <div class="payment">
+
+            <p>
+                <strong>
+                    Aucun enseignant
+                    pour le moment
+                </strong>
+            </p>
+
+            <p>
+                Les enseignants sont
+                entièrement gratuits.
+            </p>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         ÉLÈVES
+    ========================= -->
+
+    <section id="eleves">
+
+        <h2>🎓 Élèves</h2>
+
+
+        <div class="payment">
+
+            <p>
+                <strong>
+                    Aucun élève
+                    pour le moment
+                </strong>
+            </p>
+
+            <p>
+                Les élèves sont
+                entièrement gratuits.
+            </p>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         PAIEMENTS
+    ========================= -->
+
+    <section id="paiements">
+
+        <h2>
+            💰 Vérification des paiements
+        </h2>
+
+
+
+        <!-- PAIEMENT ÉCOLE -->
+
+        <div class="payment">
+
+            <p>
+                <strong>
+                    🏫 Abonnement école
+                </strong>
+            </p>
+
+
+            <p>
+                Montant :
+                <strong>
+                    250 000 GNF / mois
+                </strong>
+            </p>
+
+
+            <p>
+                Paiement Orange Money :
+                <strong>
+                    614 877 827
+                </strong>
+            </p>
+
+
+            <p>
+
+                Statut :
+
+                <span class="status">
+                    En attente
+                </span>
+
+            </p>
+
+
+            <button
+                class="btn verify"
+                onclick="verifierPaiement('école')">
+
+                ✅ Vérifier
+
+            </button>
+
+
+            <button
+                class="btn reject"
+                onclick="refuserPaiement('école')">
+
+                ❌ Refuser
+
+            </button>
+
+        </div>
+
+
+
+        <!-- PAIEMENT PARENT -->
+
+        <div class="payment">
+
+            <p>
+                <strong>
+                    👨‍👩‍👧 Abonnement parent
+                </strong>
+            </p>
+
+
+            <p>
+                Montant :
+                <strong>
+                    25 000 GNF / mois
+                </strong>
+            </p>
+
+
+            <p>
+                Paiement Orange Money :
+                <strong>
+                    614 877 827
+                </strong>
+            </p>
+
+
+            <p>
+
+                Statut :
+
+                <span class="status">
+                    En attente
+                </span>
+
+            </p>
+
+
+            <button
+                class="btn verify"
+                onclick="verifierPaiement('parent')">
+
+                ✅ Vérifier
+
+            </button>
+
+
+            <button
+                class="btn reject"
+                onclick="refuserPaiement('parent')">
+
+                ❌ Refuser
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         RETOUR
+    ========================= -->
+
+    <button
+        class="btn logout"
+        onclick="retourAccueil()">
+
+        ↩️ Retour à School Connect
+
+    </button>
+
+
+</div>
+
+
+
+<!-- =========================
+     PIED DE PAGE
+========================= -->
+
+<footer>
+
+    School Connect © 2026
+
+</footer>
+
+
+
+<!-- =========================
+     JAVASCRIPT
+========================= -->
+
+<script>
+
+
+    /*
+     * Faire défiler vers
+     * une section
+     */
+
+    function afficher(id) {
+
+        const section =
+            document.getElementById(id);
+
+
+        if (section) {
+
+            section.scrollIntoView({
+
+                behavior: "smooth",
+
+                block: "start"
+
+            });
+
+        }
+
+    }
+
+
+
+    /*
+     * Vérifier un paiement
+     */
+
+    function verifierPaiement(type) {
+
+        alert(
+            "Paiement " +
+            type +
+            " marqué comme vérifié."
+        );
+
+    }
+
+
+
+    /*
+     * Refuser un paiement
+     */
+
+    function refuserPaiement(type) {
+
+        alert(
+            "Paiement " +
+            type +
+            " refusé."
+        );
+
+    }
+
+
+
+    /*
+     * Retour à l'accueil
+     */
+
+    function retourAccueil() {
+
+        window.location.href =
+            "index.html";
+
+    }
+
+
+</script>
+
+
+</body>
+</html>

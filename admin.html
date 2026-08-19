@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>PANNEAU ADMIN - SCHOOL CONNECT</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body{background:#0a0a0a;color:white;padding:15px;font-family:Arial;margin:0}
+.login{background:#1a1a1a;padding:25px;border-radius:15px;max-width:400px;margin:80px auto;text-align:center;border:2px solid #ffcc00}
+input,select{width:90%;padding:14px;margin:8px 0;border-radius:10px;border:1px solid #555;background:#333;color:white;font-size:16px}
+.btn{background:#ffcc00;color:#000;padding:14px 25px;border:none;border-radius:10px;font-weight:bold;cursor:pointer;font-size:16px;width:95%}
+.carte{background:#1a1a1a;padding:18px;margin:12px 0;border-radius:12px;border-left:6px solid #555}
+.actif{border-left-color:#00ff00}.inactif{border-left-color:red}.expire{border-left-color:orange}
+button{padding:11px 18px;border:none;border-radius:8px;cursor:pointer;margin:5px;font-weight:bold;font-size:14px}
+.btn-activer{background:#00ff00;color:#000}.btn-bloquer{background:red;color:white}
+.btn-ajouter{background:#0099ff;color:white;width:32%;padding:15px;font-size:14px;margin:5px 0}
+.btns{display:flex;gap:5px;flex-wrap:wrap}
+#panel{display:none}.prix{color:#ffcc00;font-size:13px;font-weight:bold}.date{color:#aaa;font-size:13px}
+h1{color:#ffcc00;text-align:center}h2{color:#00ff00;border-bottom:2px solid #333;padding-bottom:8px}
+.total{background:#222;padding:15px;border-radius:10px;margin-bottom:20px;text-align:center}
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:999;overflow-y:auto}
+.modal-content{background:#222;padding:20px;border-radius:15px;max-width:450px;margin:50px auto}
+</style>
+</head>
+<body>
+
+<!-- PAGE DE CONNEXION -->
+<div id="login" class="login">
+<h1>🔐 ADMIN CAPO</h1>
+<p>School Connect 2026</p>
+<form onsubmit="connecter(); return false;">
+<input type="password" id="mdp" placeholder="Mot de passe Admin" required>
+<button class="btn" type="submit">ENTRER</button>
+</form>
+</div>
+
+<!-- PANNEAU ADMIN -->
+<div id="panel">
+<h1>🔧 PANNEAU DE CONTRÔLE</h1>
+
+<div class="total">
+<b>REVENUS MENSUELS POTENTIELS</b><br>
+<span style="color:#00ff00;font-size:20px" id="revenu">0 FG / MOIS</span>
+</div>
+
+<!-- LES 3 BOUTONS -->
+<div class="btns">
+<button class="btn-ajouter" onclick="ouvrirModal('ecole')">🏫 ÉCOLE</button>
+<button class="btn-ajouter" onclick="ouvrirModal('parent')">👨‍👩‍👧 PARENT</button>
+<button class="btn-ajouter" onclick="ouvrirModal('enseignant')">👨‍🏫 ENSEIGNANT</button>
+</div>
+
+<div id="liste"></div>
+
+</div>
+
+<!-- POPUP AJOUTER -->
+<div id="modal" class="modal">
+<div class="modal-content">
+<h2 id="modalTitre"></h2>
+<div id="formulaire"></div>
+<button class="btn" onclick="enregistrer()">ENREGISTRER</button>
+<button class="btn" style="background:#555" onclick="fermerModal()">ANNULER</button>
+</div>
+</div>
+
+<script>
+const MOT_DE_PASSE = "CAPO2026";
+let typeAjout = "";
+
+let data = {
+  "ecoles": [
+    {"id": "wendpanga", "nom": "Lycée Wendpanga", "statut": "actif", "expiration": "2026-10-15", "prix": "250000 FG / mois"}
+  ],
+  "parents": [
+    {"id": "falilou", "nom": "Falilou - Papa de Amadou Bah", "statut": "inactif", "expiration": "2026-09-17", "prix": "25000 FG / mois"}
+  ],
+  "enseignants": []
+};
+
+function connecter(){
+    if(document.getElementById("mdp").value == MOT_DE_PASSE){
+        document.getElementById("login").style.display = "none";
+        document.getElementById("panel").style.display = "block";
+        afficher();
+    }else{alert("❌ Mauvais mot de passe CAPO!")}
+}
+
+function afficher(){
+    let html = ""; let total = 0; let aujourdhui = new Date();
+
+    for(let type in data){
+        let titre = type.toUpperCase();
+        if(type=="ecoles") titre="🏫 ECOLES";
+        if(type=="parents") titre="👨‍👩‍👧 PARENTS";
+        if(type=="enseignants") titre="👨‍🏫 ENSEIGNANTS";
+
+        html += `<h2>${titre}</h2>`;
+        data[type].forEach(item => {
+            let exp = new Date(item.expiration);
+            let classe = item.statut;
+            if(exp < aujourdhui && item.statut == "actif") classe = "expire";
+            if(item.statut == "actif") total += parseInt(item.prix);
+
+            html += `<div class="carte ${classe}">
+            <b>${item.nom}</b> <br>
+            <span class="prix">${item.prix}</span> <br>
+            <span class="date">Expire le: ${item.expiration}</span> <br><br>
+            Statut: <b>${item.statut.toUpperCase()}</b> <br><br>
+            <button class="btn-activer" onclick="changer('${type}','${item.id}','actif')">✅ ACTIVER</button>
+            <button class="btn-bloquer" onclick="changer('${type}','${item.id}','inactif')">⛔ BLOQUER</button>
+            </div>`;
+        });
+    }
+    document.getElementById("liste").innerHTML = html;
+    document.getElementById("revenu").innerText = total.toLocaleString() + " FG / MOIS";
+}
+
+function changer(type, id, nouveauStatut){
+    let item = data[type].find(x => x.id == id);
+    item.statut = nouveauStatut;
+    if(nouveauStatut == "actif"){
+        let d = new Date(); d.setMonth(d.getMonth() + 1);
+        item.expiration = d.toISOString().split('T')[0];
+        alert("✅ ACTIVÉ! Expire: " + item.expiration);
+    }else{alert("⛔ BLOQUÉ!")}
+    afficher();
+}
+
+// GESTION POPUP
+function ouvrirModal(type){
+    typeAjout = type;
+    document.getElementById("modal").style.display = "block";
+
+    let titre = ""; let form = "";
+    if(type=="ecole"){
+        titre="🏫 Nouvelle École";
+        form=`<input type="text" id="nom" placeholder="Nom de l'école">
+              <input type="text" id="id" placeholder="ID: ex: hasac">`;
+    }
+    if(type=="parent"){
+        titre="👨‍👩‍👧 Nouveau Parent";
+        form=`<input type="text" id="nom" placeholder="Nom du Parent">
+              <input type="text" id="id" placeholder="ID: ex: diallo">
+              <input type="text" id="eleve" placeholder="Nom de l'élève">`;
+    }
+    if(type=="enseignant"){
+        titre="👨‍🏫 Nouvel Enseignant";
+        form=`<input type="text" id="nom" placeholder="Nom du Prof">
+              <input type="text" id="id" placeholder="ID: ex: mr_kaba">
+              <input type="text" id="matiere" placeholder="Matière: Maths, Français...">`;
+    }
+
+    let d = new Date(); d.setMonth(d.getMonth() + 1);
+    form += `<input type="date" id="exp" value="${d.toISOString().split('T')[0]}">`;
+
+    document.getElementById("modalTitre").innerText = titre;
+    document.getElementById("formulaire").innerHTML = form;
+}
+
+function fermerModal(){document.getElementById("modal").style.display = "none"}
+
+function enregistrer(){
+    let nom = document.getElementById("nom").value;
+    let id = document.getElementById("id").value;
+    let exp = document.getElementById("exp").value;
+
+    if(nom == "" || id == ""){alert("Remplis tous les champs!");return;}
+
+    if(typeAjout=="ecole"){
+        data.ecoles.push({"id":id,"nom":nom,"statut":"inactif","expiration":exp,"prix":"250000 FG / mois"});
+    }
+    if(typeAjout=="parent"){
+        let eleve = document.getElementById("eleve").value;
+        data.parents.push({"id":id,"nom":nom+" - Parent de "+eleve,"statut":"inactif","expiration":exp,"prix":"25000 FG / mois"});
+    }
+    if(typeAjout=="enseignant"){
+        let matiere = document.getElementById("matiere").value;
+        data.enseignants.push({"id":id,"nom":nom+" - "+matiere,"statut":"inactif","expiration":exp,"prix":"GRATUIT"});
+    }
+
+    alert("✅ Ajouté avec succès!");
+    fermerModal(); afficher();
+}
+</script>
+</body>
+</html>
